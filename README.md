@@ -1,3 +1,5 @@
+NOTE: the code does not currently compile. I'll remove this note when I upload the first running version.
+
 # HVAC-plc
 Digital Loggers PLDuino code for custom HVAC monitoring
 
