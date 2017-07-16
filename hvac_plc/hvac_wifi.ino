@@ -9,6 +9,8 @@
 #include "utils.h"
 using namespace PLDuino;
 
+HardwareSerial &wifi = Serial2;
+
 // an equivalent to (sstream << setw(width) << setfill(fill) << value).str()
 String fmt (int value, int width, char fill='0')
 {
@@ -59,7 +61,7 @@ void processCommand (const String &cmd, HardwareSerial &wifi)
     case 's':
     case 'S':
       // current state was requested
-      Serial.print("Sending current state...");
+ //     Serial.print("Sending current state...");
       for(int i=0; i<6; ++i)
         wifi.write(digitalRead(RELAY1+i)==HIGH? "1" : "0");
       for(int i=0; i<8; ++i)
@@ -79,38 +81,21 @@ void processCommand (const String &cmd, HardwareSerial &wifi)
         ).c_str());
       wifi.write("e");
       wifi.flush();
-      Serial.println(" done.");
+ //     Serial.println(" done.");
       break;
   }
 }
 
 
-void initWiFi()
+void initWifi()
 {
   // Setup wifi
-  LOG("Initializing ESP8266... ");
+  logDisplay("Initializing ESP8266... ");
 
   // Initializing ESP module
   PLDuino::enableESP();
-  HardwareSerial &wifi = Serial2;
 
-  tft.println("done.");
-  tft.println();
-
-  // Print Wi-Fi credentials for convenience
-  tft.setTextSize(2);
-  tft.setTextColor(ILI9341_WHITE);  tft.print("1.Connect to \"");
-  tft.setTextColor(ILI9341_YELLOW); tft.print("Wi-Fi Test");
-  tft.setTextColor(ILI9341_WHITE);  tft.println("\"");
-  tft.setTextColor(ILI9341_WHITE);  tft.print("2.Use password \"");
-  tft.setTextColor(ILI9341_YELLOW); tft.print("password"); 
-  tft.setTextColor(ILI9341_WHITE);  tft.println("\"");
-  tft.setTextColor(ILI9341_WHITE);  tft.print("3.Open URL: ");
-  tft.setTextColor(ILI9341_YELLOW); tft.println("192.168.4.1");
-  
-  tft.setTextColor(ILI9341_WHITE);
-  tft.setTextSize(1);
-  tft.println();
+  logDisplay("done.");
   
   // Reset ESP
   digitalWrite(PLDuino::ESP_RST, LOW);
@@ -118,43 +103,50 @@ void initWiFi()
   digitalWrite(PLDuino::ESP_RST, HIGH);
   delay(3000);
   
-  // Skip its boot messages
+  // Print its boot messages
+  logDisplay("Booting ESP...");
+  
+  String result = "";
+  char ch;
+  
   while(wifi.available())
-    tft.write((char)wifi.read());
-  tft.println();
-
-  String recv = "";
-  tft.println("Ready to execute commands.");
-  while(true)
   {
-    if (wifi.available())
-    {
-      char ch = wifi.read();
-      if (ch == 'C') recv = String();
-      else recv += ch;
-      
-      while(recv.length() >= 2)
-      {
-        // Extract 2-char command
-        String cmd = recv.substring(0, 2);
-        // Remove this command from the buffer
-        recv = recv.substring(2);
-        
-        Serial.print(cmd);
-        // Print only "R*"/"r*" and "O*"/"o*" commands
-        if (cmd != "ss")
-          tft.print(cmd);
-
-        // Execute the command
-        processCommand(cmd, wifi);
-      }
-    }
+    ch = wifi.read();
+    result += ch;
   }
+  logDisplay(result);
+  
+  logDisplay("done");
+
+/*
+  String result;
+  wifi.write("wifi.sta.getip()");
+  getWifiResponse(result);
+  logDisplay( "IP addr: " + result );
+  wifi.write("wifi.sta.getmac()");
+  getWifiResponse(result);
+  logDisplay( "MAC addr: " + result );
+  */
+  logDisplay("Ready to execute commands.");
 }
 
-void checkCmd()
+void getWifiResponse(String result)
 {
-  if (wifi.available())
+  char ch;
+  result = "";
+  int a, b;
+  for (a = 0, b = wifi.available(); a < b; a++ )
+  {
+    ch = wifi.read();
+    result += ch;
+  }
+  logDisplay("getWifiResponse: " + result);
+}
+
+void checkWifiCmd()
+{
+  String recv = "";
+  while (wifi.available())
     {
       char ch = wifi.read();
       if (ch == 'C') recv = String();
@@ -168,9 +160,6 @@ void checkCmd()
         recv = recv.substring(2);
         
         Serial.print(cmd);
-        // Print only "R*"/"r*" and "O*"/"o*" commands
-        if (cmd != "ss")
-          tft.print(cmd);
 
         // Execute the command
         processCommand(cmd, wifi);

@@ -36,8 +36,8 @@ void blinkLED()
 void initDisplay();
 void initWifi();
 void logDisplay();
-void clearDisplay();
-void checkWifiCommand();
+void clrDisplay();
+void checkWifiCmd();
 void refreshHvacDisplay();
 
 void setup()
@@ -57,21 +57,19 @@ void setup()
   Serial2.begin(115200);
   
   // Print version info.
-  clearDisplay();
-  logDisplay("PLDuino firmware v" VERSION ", built " __DATE__)
-  logDisplay("")
+  clrDisplay();
 
   // We need to initialize SD card at startup!
-  logDisplay("Initializing SD card...")
+  logDisplay("Initializing SD card...");
   card_initialized = card.init(SPI_HALF_SPEED, PLDuino::SD_CS);
   if (!SD.begin(PLDuino::SD_CS))
-    logDisplay("ERROR: Can't initialize SD card!")
+    logDisplay("ERROR: Can't initialize SD card!");
 
   // Initializing real-time clock.
-  logDisplay("Initializing RTC...")
+  logDisplay("Initializing RTC...");
   setSyncProvider(RTC.get);
   if (timeStatus() != timeSet)
-    logDisplay("ERROR: Unable to sync with the RTC")
+    logDisplay("ERROR: Unable to sync with the RTC");
   
   // Setup speaker pin to play sounds.
   logDisplay("Initializing speaker...");
@@ -81,18 +79,22 @@ void setup()
   initWifi();
   
   // Initialization is complete. 
-  logDisplay("")
-  logDisplay("Initialization complete.")
-  logDisplay("")
-  logDisplay("-- Touch to keep the log on screen --")
-  delay(1500);
-  while(touch.dataAvailable()) touch.read();
+  logDisplay("");
+  logDisplay("Initialization complete.");
+  logDisplay("");
+
+  // first run sets pins and caches starting status
+  refreshHvacDisplay();
+  
+  // logDisplay("-- Touch to keep the log on screen --");
+  // while(touch.dataAvailable()) touch.read();
+  // delay(5000);
 }
 
 void loop()
 {
-  // Check if there are any wifi requests (needed?)
-  checkWifiCommand();
+  // check for a command
+  checkWifiCmd();
   
   // update display
   refreshHvacDisplay();
