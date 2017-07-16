@@ -15,10 +15,12 @@ sketch code, by following the various examples in the PLDuino repository.
 
 EXCEPT, the ESP8266! The ESP8266 is running a firmware install called NodeMCU. This firmware allows you to upload and run Lua code files, which call the underlying ESP8266 firmware and configure it to run as a web client, server, access point, etc. In order to change the Lua code loaded into the NodeMCU firmware, you need to follow a special process to upload it to the NodeMCU firmware.
 
-You cannot upload files to the ESP82866 directly, but you do have some ability to call out to it from your sketch using a serial port, for example the demo sketch that shows you how invoke the Lua program already installed on it to provide a hard-coded access point and web page to report status of the PLDuino (the Wifi portion of demo.ino). What they don't tell you is how to change it. If you're like me you have been scratching your head - where does the demo SSID and IP address get set? Where is the web page that gets returned if I hit that IP address, and how is it getting the PLDuino status?
+You cannot upload files to the ESP8266 directly, but you do have some ability to call out to it from your sketch using a serial port, for example the demo sketch that shows you how invoke the Lua program already installed on it to provide a hard-coded access point and web page to report status of the PLDuino (the Wifi portion of demo.ino). What they don't tell you is how to change it. If you're like me you have been scratching your head - where does the demo SSID and IP address get set? Where is the web page that gets returned if I hit that IP address, and how is it getting the PLDuino status?
 
 ### Flashing the NodeMCU firmware
-First, you should make sure you are using the current NodeMCU firmware for the PLDuino. I cannot figure out an easy way to tell (but there is a kinda a way to do it using ESPlorer, which I will explain shortly.)
+First, you should make sure you are using the current NodeMCU firmware for the PLDuino. The software used to communicate with the ESP2866 via Serial lets you run interactive Lua commands on the NodeMCU firmware to print the version. I just flashed first (because I didn't figure out how to use ESPlorer right away.) If you want to check what you have first, see the section on "uploading Lua code" to install ESPlorer and check the version, then come back here.
+
+NOTE: It is possible nay likely that you have older firmware that only communicates at 9600 baud, and your attempts to open the port will fail or print gibberish. You can make it work by changing the upload helper sketch code to use 9600 baud and then set ESPlorer to open the port at 9600 baud.
 
 To update the firmware, you need to compile and install the esp_flash_helper sketch, and then press the "Flash" button that comes up. Now you're ready to flash.
 
@@ -36,7 +38,6 @@ Once ESPlorer is installed and launched (it takes a couple of minutes to initial
 
 To put the PLDuino back to "factory Lua", select the Scripts tab on the left, click the "Upload..." button at the bottom of the panel, and then select all the Lua files and the HTML file in the ESP8266 directory of Digital Loggers' GitHub repository.
 
-NOTE: You did update your firmware didn't you? If you didn't you are a naughty bunny. It is possible nay likely that you have older firmware that only communicates at 9600 baud, and your attempts to open the port will fail or print gibberish. You can make it work by changing the upload helper sketch code to use 9600 baud and then set ESPlorer to open the port at 9600 baud, but just upgrade already.
 ### Writing your own Lua code
 Cue the Staples WAV file: "That was easy!" So now, you know what you need to know to modify and upload Lua code to the PLDuino. There are some interesting warnings on the NodeMCU site and couple other places. It is not particularly intuitive to code the ESP8266. It is a highly event oriented style with some very subtle gotchas and limitations. Be careful or will find yourself following the instructions on the Digital Loggers site on how to de-brick your ESP8266. You have been warned. My Lua files use a common technique to allow you to recover, by putting a delay call in init.lua, after which the real code in test.lua gets called. This gives you time to run a manual "=file.remove('init.lua')" on the ESPlorer command line, so you can get out of an accidental reboot loop without re-flashing the chip.
 ### Customizing the firmware
