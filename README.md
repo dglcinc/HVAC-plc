@@ -4,8 +4,16 @@ Digital Loggers PLDuino code for custom HVAC monitoring
 # Overview
 This code is hacked and reassembled from PLDuino repository (<https://github.com/digitalloggers/PLDuino>) published by Digital Loggers for their Arduino-based Programmable Logic Controller (PLC), to meet the purposes of my home's custom HVAC system. I am using the PLDuino to monitor it (and perhaps in future versions control it.) I give no representations or apologies for quality, functionality, or reusability. :-)
 
+[[Note that this is archived, because I finally decided, in spite of the fact that the Digital Loggers PLC is a pretty cool device (with features like optical couplers on the digital inputs and open collectors on the digital outputs) the Arduino and ESP2866 is just too low-level for my needs:
+* The ESP2866 especially is a pain to work with - you can only communicate with it via Serial from your Arduino code
+* The NodeMCU coding itself is very fussy event-driven code that is not very intuitive to program and debug
+* Any time you change your NodeMCU code you have to use a Serial link to upload your Lua files, which is a pain because you also pretty much need to use the upload helper sketch on the Duino, so you're constantly toggling sketches and uploading NodeMCU Lua
+* I don't really need the low-level speed Arduino and Arduino code offers; I'd rather get the rich toolset and easy experience on the Raspberry Pi; the main place this probably has a small impact is reading the thermometers (Dallas digital chips) which are slow anyway, but would probably be somewhat faster on the Duino set at a low precision
+
+So I reluctantly abandoned this project and the PLC device and got a Pi3 with a breakout board. I was able to reimplement this entire project in ONE DAY because I didn't have to mess around with getting the wifi working (it "just works"), and the programming model is pretty similar, except I use Python, which frankly I prefer; it's way more powerful than the Arduino or Lua libraries. See that other repository (HVAC-pi) for detailed notes on implementation and gotchas. I plan on copying some of the PLC features like optical couplers and open collectors, the schematics and parts are fully documented on their website.]]
+
 # Newb Gotchas
-Since I'm a relative newb to the Arduino universe, along with the ESP8266 Wifi shield and Adafruit ILI9341 touchscreen used by this PLC, it's taken me a ton of time to figure out how to tweak this thing. I'm making a few notes here so other newbs can suffer somewhat less. These notes may be more valuable than the code. I report, you decide.
+Since I'm a relative newb to the Arduino universe, along with the ESP8266 Wifi chip and Adafruit ILI9341 touchscreen used by this PLC, it's taken me a ton of time to figure out how to tweak this thing. I'm making a few notes here so other newbs can suffer somewhat less. These notes may be more valuable than the code. I report, you decide.
 
 ## How to talk to the ESP82866 and program in Lua
 Yeah, so I guess the smart people already know this, but there are some tricks.
