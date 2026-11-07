@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
+// Copyright David Lewis
 #include <Arduino.h>
 #include <SPI.h>
 #include <Adafruit_GFX.h>

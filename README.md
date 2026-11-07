@@ -64,3 +64,7 @@ These are completely isolated from the Arduino digital inputs. To use the digita
 
 ### Open Collector outputs
 Can't say that I fully understand these yet (there are some nice online tutorials on open collectors), but the key thing to understand is that when you connect a circuit to a PLC output pin, the output is "pulled to ground" at the pin. So you have to put your supply voltage on the "clamp" terminal (e.g. the input voltage for your PLC) and then use the same voltage and the output pin to drive your output - when the output pin is set to high, it pulls the voltage to ground (completes the circuit). There is an example on DL's website using a contactor whose solenoid is driven this way. Again, for neophytes like me it would be nice to have some fully realized projects including the code.
+
+## Licensing
+
+This repository is free for personal and other noncommercial use under the PolyForm Noncommercial License 1.0.0 (`LICENSE`). Commercial use needs a separate licence from the copyright holder; ask through [github.com/dglcinc](https://github.com/dglcinc). The third-party libraries in `libraries/` keep their own licences.

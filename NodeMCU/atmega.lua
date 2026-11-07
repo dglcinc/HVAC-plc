@@ -1,3 +1,5 @@
+-- SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
+-- Copyright David Lewis
 --This module contains code which is used to communicate with Arduino.
 
 -- Length of packets sent by Arduino on state requests

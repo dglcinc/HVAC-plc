@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
+// Copyright David Lewis
 #include "utils.h"
 #include <HardwareSerial.h>
 #include <SPI.h>
