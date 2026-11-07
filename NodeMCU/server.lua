@@ -1,3 +1,5 @@
+-- SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
+-- Copyright David Lewis
 -- This module implements a simple web-server to allow configuration changes via Wi-Fi.
 -- Please be careful! Since it's just an example of working with ESP module, it has no access control at all (to keep things simple).
 
